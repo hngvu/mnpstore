@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+}
+
+const { title = "Tiệm Tạp Hóa - Tiện Lợi & Thân Thuộc" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="vi">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+		<!-- FontAwesome Icons -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+		/>
+
+		<!-- Google Fonts: Thân thiện và Viết tay -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;0,800;1,700&family=Be+Vietnam+Pro:wght@300;400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body class="text-neutral-800 relative min-h-screen overflow-x-hidden pb-12">
+		<!-- Lớp phủ tạo cảm giác ảnh ấm áp hoài niệm -->
+		<div class="vintage-overlay"></div>
+
+		<!-- Nội dung trang -->
+		<slot />
+	</body>
+</html>
