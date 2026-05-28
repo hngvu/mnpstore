@@ -716,6 +716,55 @@ const serverProducts = await fetchProducts();
 
   <!-- Element chứa dữ liệu sản phẩm từ server để đồng bộ qua client -->
   <div id="server-products-data" data-products={JSON.stringify(serverProducts)} class="hidden"></div>
+
+  <!-- Chatbot Widget nổi góc phải -->
+  <button
+    id="chatbot-toggle"
+    class="fixed bottom-6 right-6 z-50 bg-[#2d2319] hover:bg-[#4a3f35] text-[#f4a261] w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-3 border-[#f4a261] transition-all hover:scale-110 active:scale-95"
+    aria-label="Mở chat tư vấn"
+  >
+    <i id="chatbot-toggle-icon" class="fa-solid fa-comments text-2xl"></i>
+  </button>
+
+  <!-- Badge mời chat -->
+  <div id="chatbot-badge" class="fixed bottom-[88px] right-6 z-50 bg-[#e07a5f] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md animate-bounce cursor-pointer border-2 border-[#2d2319]">
+    Hỏi mình đi! 🛒
+  </div>
+
+  <!-- Khung chat -->
+  <div id="chatbot-window" class="fixed bottom-24 right-6 z-50 w-[340px] max-w-[calc(100vw-48px)] bg-[#faf6eb] rounded-2xl shadow-2xl border-3 border-[#2d2319] flex flex-col overflow-hidden hidden" style="height: 480px; max-height: calc(100vh - 120px);">
+    <!-- Header -->
+    <div class="bg-[#2d2319] text-[#f7f3e9] p-3 flex items-center gap-3 border-b-3 border-[#e07a5f] shrink-0">
+      <div class="w-9 h-9 bg-[#f4a261] rounded-full flex items-center justify-center text-lg border-2 border-[#f7f3e9]">🏪</div>
+      <div class="flex-1">
+        <h4 class="font-retro font-bold text-sm text-[#f4a261]">Tư Vấn Viên</h4>
+        <p class="text-[10px] text-[#b5a391]">Tạp Hóa Tuổi Thơ • Luôn sẵn sàng</p>
+      </div>
+      <button id="chatbot-close" class="text-[#b5a391] hover:text-white transition-colors">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Vùng tin nhắn -->
+    <div id="chatbot-messages" class="flex-1 overflow-y-auto p-3 space-y-3 scroll-smooth"></div>
+
+    <!-- Quick replies -->
+    <div id="chatbot-quick-replies" class="px-3 pb-2 flex flex-wrap gap-1.5 shrink-0"></div>
+
+    <!-- Ô nhập -->
+    <div class="p-3 bg-[#f1ebd9] border-t-2 border-[#2d2319] flex gap-2 shrink-0">
+      <input
+        id="chatbot-input"
+        type="text"
+        placeholder="Nhập tin nhắn..."
+        class="flex-1 bg-white border-2 border-[#2d2319] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#e07a5f] font-sans"
+        autocomplete="off"
+      />
+      <button id="chatbot-send" class="bg-[#e07a5f] hover:bg-[#de3e3e] text-white w-10 h-10 rounded-lg flex items-center justify-center border-2 border-[#2d2319] transition-all active:scale-90">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
 </Layout>
 
 <script>
@@ -1454,6 +1503,239 @@ const serverProducts = await fetchProducts();
     }, 3000);
   }
 
+  // --- CHATBOT LOGIC ---
+  const chatbotScripts = [
+    {
+      keywords: ["chào", "hello", "hi", "xin chào", "hey", "alo"],
+      response: "Chào bạn yêu! Chào mừng đến với Tiệm Tạp Hóa Tuổi Thơ. Mình có thể giúp gì cho bạn hôm nay?",
+      quickReplies: ["Xem sản phẩm", "Giờ mở cửa", "Cách đặt hàng"]
+    },
+    {
+      keywords: ["giờ", "mở cửa", "đóng cửa", "thời gian", "hoạt động", "buổi sáng", "buổi tối"],
+      response: "Tiệm mở cửa từ 6:00 sáng đến 9:00 tối mỗi ngày nha bạn! Kể cả Chủ nhật luôn đó, không nghỉ ngày nào hết trơn.",
+      quickReplies: ["Địa chỉ tiệm", "Số điện thoại", "Xem sản phẩm"]
+    },
+    {
+      keywords: ["địa chỉ", "ở đâu", "đường", "chỉ đường", "vị trí", "bản đồ"],
+      response: "Tiệm nằm ở Số 42, Đường Hẻm Kỷ Niệm, Sài Gòn nè bạn. Con hẻm nhỏ quen thuộc rợp bóng mát, dễ tìm lắm!",
+      quickReplies: ["Giờ mở cửa", "Số điện thoại", "Cách đặt hàng"]
+    },
+    {
+      keywords: ["sđt", "điện thoại", "liên hệ", "gọi", "số dt", "hotline"],
+      response: "Bạn gọi cho tiệm theo số 0908.123.456 nha! Tiệm nghe máy từ 6h sáng đến 9h tối. Hoặc bạn cứ nhắn tin ở đây, mình trả lời liền!",
+      quickReplies: ["Giờ mở cửa", "Địa chỉ tiệm", "Đặt hàng"]
+    },
+    {
+      keywords: ["đặt hàng", "mua hàng", "order", "mua", "đặt đồ", "cách mua"],
+      response: "Đặt hàng ở tiệm đơn giản lắm bạn ơi:\n1️⃣ Chọn sản phẩm từ gian hàng\n2️⃣ Bấm 'Lượm đồ' bỏ vào giỏ\n3️⃣ Mở Giỏ Đồ bấm 'Viết Hóa Đơn'\n4️⃣ Điền tên và SĐT, rồi gửi đơn!\n\nTiệm sẽ xác nhận và giao hàng nhanh gọn cho bạn!",
+      quickReplies: ["Thanh toán", "Giao hàng", "Xem sản phẩm"]
+    },
+    {
+      keywords: ["thanh toán", "trả tiền", "chuyển khoản", "tiền mặt", "momo", "zalopay", "ngân hàng"],
+      response: "Tiệm nhận thanh toán bằng:\n💵 Tiền mặt khi nhận hàng\n🏦 Chuyển khoản ngân hàng\n📱 Ví MoMo / ZaloPay\n\nBạn chọn cách nào tiện nhất nha!",
+      quickReplies: ["Đặt hàng", "Giao hàng", "Đổi trả"]
+    },
+    {
+      keywords: ["giao hàng", "ship", "vận chuyển", "giao đồ", "nhanh", "bao lâu"],
+      response: "Tiệm giao hàng trong ngày cho khu vực nội thành Sài Gòn nha! Thường 1-2 tiếng là có đồ liền. Miễn phí giao cho đơn từ 100k trở lên bạn nhé!",
+      quickReplies: ["Thanh toán", "Đặt hàng", "Xem sản phẩm"]
+    },
+    {
+      keywords: ["đổi trả", "hoàn tiền", "lỗi", "hư", "hết hạn", "đổi hàng", "trả hàng"],
+      response: "Tiệm đổi trả miễn phí trong 7 ngày nếu:\n✅ Sản phẩm còn nguyên tem\n✅ Còn hóa đơn mua hàng\n✅ Lỗi từ nhà sản xuất\n\nBạn cứ liên hệ tiệm qua SĐT hoặc mang đến tiệm, mình xử lý ngay cho!",
+      quickReplies: ["Số điện thoại", "Địa chỉ tiệm", "Đặt hàng"]
+    },
+    {
+      keywords: ["sản phẩm", "bán gì", "có gì", "gian hàng", "danh mục", "hàng hóa"],
+      response: "Tiệm bán đủ thứ cho bạn nè:\n🍬 Bánh kẹo ăn vặt (SUMiKA, bánh tai heo...)\n🥤 Nước giải khát (Chương Dương, Sá xị...)\n🍜 Mì gói (Miliket, Hảo Hảo...)\n🧂 Gia vị nấu ăn (dầu ăn, nước mắm...)\n\nBạn muốn xem nhóm nào?",
+      quickReplies: ["Bánh kẹo", "Nước uống", "Mì gói", "Gia vị"]
+    },
+    {
+      keywords: ["bánh kẹo", "kẹo", "bánh", "snack", "ăn vặt", "sumika"],
+      response: "Gian bánh kẹo của tiệm có nhiều món ngon nè:\n🍬 Kẹo sữa SUMiKA mềm dẻo - best seller!\n🍪 Bánh tai heo giòn rụm\n🧁 Các loại kẹo mềm, kẹo dẻo khác\n\nBấm nút 'Bánh kẹo' ở gian hàng để xem hết nha!",
+      quickReplies: ["Nước uống", "Mì gói", "Đặt hàng", "Giá bao nhiêu"]
+    },
+    {
+      keywords: ["nước", "nước uống", "giải khát", "uống", "coca", "pepsi", "sá xị", "chương dương"],
+      response: "Quầy nước của tiệm có nè bạn:\n🥤 Sá Xị Chương Dương - hương vị xưa!\n🥤 Coca Cola, Pepsi\n🥤 Nước suối, nước trái cây\n\nToàn đồ mát lạnh, giá bình dân thôi!",
+      quickReplies: ["Bánh kẹo", "Mì gói", "Đặt hàng", "Xem tất cả"]
+    },
+    {
+      keywords: ["mì", "mì gói", "mì ăn liền", "miliket", "hảo hảo", "hải sản"],
+      response: "Mì gói tiệm bán chạy lắm nè:\n🍜 Mì giấy Miliket - huyền thoại!\n🍜 Mì Hảo Hảo các vị\n🍜 Mì hải sản, mì gà...\n\nGiá chỉ từ 3.500đ/gói thôi, mua cả thùng còn rẻ hơn!",
+      quickReplies: ["Bánh kẹo", "Nước uống", "Gia vị", "Đặt hàng"]
+    },
+    {
+      keywords: ["gia vị", "nước mắm", "dầu ăn", "nấu ăn", "bếp", "tường an", "muối", "đường", "bột ngọt"],
+      response: "Gian gia vị bếp núc của tiệm đầy đủ lắm:\n🧂 Dầu ăn Tường An\n🧂 Nước mắm ngon\n🧂 Muối, đường, bột ngọt\n🧂 Tương ớt, tương cà\n\nĐồ dùng thiết yếu cho gian bếp nhà bạn!",
+      quickReplies: ["Bánh kẹo", "Mì gói", "Đặt hàng", "Xem tất cả"]
+    },
+    {
+      keywords: ["giá", "bao nhiêu", "rẻ", "đắt", "khuyến mãi", "giảm giá", "sale", "combo", "ưu đãi"],
+      response: "Giá cả ở tiệm bình dân lắm bạn ơi, phù hợp túi tiền sinh viên và gia đình luôn! Kẹo SUMiKA chỉ 1.000đ/viên, mì gói từ 3.500đ/gói.\n\nNgoài ra tiệm còn có trò 'Dò Số Trúng Kẹo' - mua kẹo 1.000đ có cơ hội trúng quà nữa nè!",
+      quickReplies: ["Xem sản phẩm", "Dò số trúng kẹo", "Đặt hàng"]
+    },
+    {
+      keywords: ["dò số", "trúng thưởng", "kẹo sữa", "mini game", "game", "may mắn", "quay số"],
+      response: "Trò 'Dò Số Trúng Kẹo' vui lắm bạn ơi! Chỉ cần 1.000đ mua 1 viên kẹo SUMiKA, bóc ra sẽ thấy số từ 00-99:\n⭐ Số 88: Giải Đặc Biệt - 1 gói kẹo 350g\n🥇 Số 12, 45: Giải Nhất - 1 lon Sá Xị\n🥈 Số 7, 33, 67, 91: Giải Nhì - 1 gói mì Miliket\n🥉 Số tận cùng 5 hoặc 9: 2 viên kẹo sữa\n\nThử vận may ngay bạn ơi!",
+      quickReplies: ["Xem sản phẩm", "Đặt hàng", "Cách chơi"]
+    },
+    {
+      keywords: ["cảm ơn", "thanks", "cám ơn", "tks"],
+      response: "Không có chi bạn yêu! Tiệm luôn sẵn sàng phục vụ. Bạn cần gì thêm cứ hỏi mình nhé, chúc bạn một ngày vui vẻ!",
+      quickReplies: ["Xem sản phẩm", "Đặt hàng", "Giờ mở cửa"]
+    }
+  ];
+
+  // Quick replies mặc định
+  const defaultQuickReplies = ["Xem sản phẩm", "Đặt hàng", "Giờ mở cửa", "Sản phẩm bán chạy"];
+
+  // Tin nhắn chào mừng
+  const welcomeMessage = "Xin chào bạn! Mình là Tư Vấn Viên của Tiệm Tạp Hóa Tuổi Thơ. Bạn muốn hỏi gì về sản phẩm, cách đặt hàng, hay cần tư vấn gì? Cứ hỏi mình nhé!";
+
+  let chatbotOpen = false;
+  let chatbotInitialized = false;
+
+  function toggleChatbot() {
+    const window = document.getElementById("chatbot-window");
+    const badge = document.getElementById("chatbot-badge");
+    const icon = document.getElementById("chatbot-toggle-icon");
+
+    if (!window || !badge || !icon) return;
+
+    chatbotOpen = !chatbotOpen;
+
+    if (chatbotOpen) {
+      window.classList.remove("hidden");
+      badge.classList.add("hidden");
+      icon.className = "fa-solid fa-xmark text-2xl";
+
+      if (!chatbotInitialized) {
+        chatbotInitialized = true;
+        addBotMessage(welcomeMessage);
+        renderQuickReplies(defaultQuickReplies);
+      }
+
+      setTimeout(() => {
+        document.getElementById("chatbot-input")?.focus();
+      }, 100);
+    } else {
+      window.classList.add("hidden");
+      badge.classList.remove("hidden");
+      icon.className = "fa-solid fa-comments text-2xl";
+    }
+  }
+
+  function addBotMessage(text) {
+    const container = document.getElementById("chatbot-messages");
+    if (!container) return;
+
+    const msg = document.createElement("div");
+    msg.className = "flex gap-2 items-end animate-fade-in";
+    msg.innerHTML = `
+      <div class="w-7 h-7 bg-[#f4a261] rounded-full flex items-center justify-center text-xs border border-[#2d2319] shrink-0">🏪</div>
+      <div class="bg-white rounded-2xl rounded-bl-sm px-3 py-2 text-sm text-[#2d2319] border-2 border-[#2d2319] max-w-[240px] font-sans leading-relaxed whitespace-pre-line">${text}</div>
+    `;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function addUserMessage(text) {
+    const container = document.getElementById("chatbot-messages");
+    if (!container) return;
+
+    const msg = document.createElement("div");
+    msg.className = "flex gap-2 items-end justify-end animate-fade-in";
+    msg.innerHTML = `
+      <div class="bg-[#e07a5f] text-white rounded-2xl rounded-br-sm px-3 py-2 text-sm max-w-[240px] font-sans leading-relaxed">${text}</div>
+    `;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function addTypingIndicator() {
+    const container = document.getElementById("chatbot-messages");
+    if (!container) return;
+
+    const typing = document.createElement("div");
+    typing.id = "chatbot-typing";
+    typing.className = "flex gap-2 items-end animate-fade-in";
+    typing.innerHTML = `
+      <div class="w-7 h-7 bg-[#f4a261] rounded-full flex items-center justify-center text-xs border border-[#2d2319] shrink-0">🏪</div>
+      <div class="bg-white rounded-2xl rounded-bl-sm px-3 py-2 border-2 border-[#2d2319]">
+        <div class="flex gap-1">
+          <span class="w-2 h-2 bg-[#b5a391] rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+          <span class="w-2 h-2 bg-[#b5a391] rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+          <span class="w-2 h-2 bg-[#b5a391] rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+        </div>
+      </div>
+    `;
+    container.appendChild(typing);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    document.getElementById("chatbot-typing")?.remove();
+  }
+
+  function renderQuickReplies(replies) {
+    const container = document.getElementById("chatbot-quick-replies");
+    if (!container) return;
+
+    container.innerHTML = "";
+    replies.forEach(text => {
+      const btn = document.createElement("button");
+      btn.className = "bg-white hover:bg-[#f4a261] text-[#2d2319] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#2d2319] transition-all active:scale-95";
+      btn.textContent = text;
+      btn.addEventListener("click", () => {
+        handleUserInput(text);
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function findResponse(input) {
+    const normalized = input.toLowerCase().trim();
+
+    for (const script of chatbotScripts) {
+      for (const keyword of script.keywords) {
+        if (normalized.includes(keyword)) {
+          return script;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function handleUserInput(text) {
+    if (!text.trim()) return;
+
+    addUserMessage(text);
+    renderQuickReplies([]);
+
+    const input = document.getElementById("chatbot-input");
+    if (input) input.value = "";
+
+    addTypingIndicator();
+
+    setTimeout(() => {
+      removeTypingIndicator();
+
+      const matched = findResponse(text);
+
+      if (matched) {
+        addBotMessage(matched.response);
+        if (matched.quickReplies) {
+          renderQuickReplies(matched.quickReplies);
+        }
+      } else {
+        addBotMessage("Xin lỗi bạn, mình chưa hiểu câu hỏi này lắm. Bạn có thể hỏi về:\n• Sản phẩm & giá cả\n• Cách đặt hàng\n• Giờ mở cửa & địa chỉ\n• Thanh toán & giao hàng\n\nHoặc chọn câu hỏi bên dưới nha!");
+        renderQuickReplies(defaultQuickReplies);
+      }
+    }, 600 + Math.random() * 400);
+  }
+
   // Khởi chạy và gán các sự kiện tĩnh
   document.addEventListener("DOMContentLoaded", () => {
     // Tải giỏ hàng
@@ -1511,5 +1793,19 @@ const serverProducts = await fetchProducts();
 
     // Khởi tạo logic Khảo sát học trò
     initSurveyLogic();
+
+    // Chatbot
+    document.getElementById("chatbot-toggle")?.addEventListener("click", toggleChatbot);
+    document.getElementById("chatbot-badge")?.addEventListener("click", toggleChatbot);
+    document.getElementById("chatbot-close")?.addEventListener("click", toggleChatbot);
+    document.getElementById("chatbot-send")?.addEventListener("click", () => {
+      const input = document.getElementById("chatbot-input");
+      if (input) handleUserInput(input.value);
+    });
+    document.getElementById("chatbot-input")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleUserInput(e.target.value);
+      }
+    });
   });
 </script>
