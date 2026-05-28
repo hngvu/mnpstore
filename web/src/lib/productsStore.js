@@ -250,3 +250,62 @@ export const submitOrderToSupabase = async ({ customerName, customerPhone, items
     };
   }
 };
+
+// Gọi đến Supabase Edge Function 'submit-survey'
+export const submitSurveyToSupabase = async ({ name, email, responses }) => {
+  if (!isSupabaseConfigured()) {
+    console.log("Supabase chưa được cấu hình. Giả lập gửi khảo sát thành công phía Client.");
+    return { success: true, id: `SRV-SIM-${Date.now()}`, isSimulated: true };
+  }
+
+  try {
+    console.log("Client-side: Đang gọi Supabase Edge Function 'submit-survey'...");
+    
+    // Gọi Supabase Edge Function thông qua Client SDK
+    const { data, error } = await supabase.functions.invoke('submit-survey', {
+      body: {
+        name,
+        email,
+        responses
+      }
+    });
+
+    if (error) {
+      // Nếu lỗi là do chưa deploy function
+      if (error.message && (error.message.toLowerCase().includes("not found") || error.message.includes("404"))) {
+        console.warn("Supabase Edge Function 'submit-survey' chưa được deploy. Tự động chuyển sang chế độ giả lập.");
+        return { success: true, id: `SRV-SIM-${Date.now()}`, isSimulated: true };
+      }
+      throw new Error(error.message || "Lỗi gọi Edge Function");
+    }
+
+    if (data && data.success === false) {
+      throw new Error(data.error || "Gửi khảo sát thất bại tại Edge Server");
+    }
+
+    return {
+      success: true,
+      id: data.id,
+      isSimulated: false,
+      message: data.message
+    };
+
+  } catch (err) {
+    console.error("Lỗi khi gửi khảo sát qua Edge Function:", err.message);
+    
+    // Nếu lỗi chưa deploy hoặc mất kết nối mạng
+    if (err.message && (
+      err.message.toLowerCase().includes("not found") || 
+      err.message.includes("404") || 
+      err.message.toLowerCase().includes("failed to fetch")
+    )) {
+      console.warn("Tự động chuyển sang chế độ giả lập do Serverless Function chưa sẵn sàng:", err.message);
+      return { success: true, id: `SRV-SIM-${Date.now()}`, isSimulated: true };
+    }
+    
+    return {
+      success: false,
+      error: err.message || "Lỗi kết nối Serverless Edge"
+    };
+  }
+};

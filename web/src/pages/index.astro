@@ -497,8 +497,150 @@ const serverProducts = await fetchProducts();
   <!-- Thông báo góc màn hình (Toast) -->
   <div id="toast-container" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-w-sm"></div>
 
+  <!-- Section: Form Khảo Sát & Góp Ý Cổ Điển -->
+  <section id="khao-sat" class="py-16 px-4 bg-[#f4ebd9] border-t-8 border-[#2d2319]">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center space-y-4 mb-10">
+        <span class="text-sm uppercase tracking-wider font-bold text-[#e07a5f]">Hộp Thư Tuổi Thơ</span>
+        <h2 class="font-retro text-3xl sm:text-4xl font-extrabold text-[#2d2319]">Sổ Góp Ý Học Trò</h2>
+        <p class="text-[#6f5e4c] max-w-md mx-auto text-sm">
+          Tiệm tạp hóa nhỏ luôn muốn lắng nghe ý kiến đóng góp chân thành từ bạn để ngày càng phục vụ chu đáo hơn nhé!
+        </p>
+      </div>
+
+      <!-- Khung sổ tay học sinh retro -->
+      <div class="relative bg-white rounded-2xl border-4 border-[#2d2319] p-6 sm:p-10 retro-shadow overflow-hidden min-h-[500px]">
+        <!-- Gáy sổ lò xo trang trí phía trên -->
+        <div class="absolute top-0 left-0 right-0 h-6 bg-[#2d2319] flex justify-around items-center px-8 border-b-2 border-[#2d2319]">
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#f4ebd9]"></div>
+        </div>
+
+        <!-- Trang giấy ô ly học sinh -->
+        <div class="mt-4 border-2 border-sky-100 p-4 sm:p-6 bg-[#fdfcf7] rounded-lg shadow-inner font-handwritten text-[#002d62]">
+          <!-- Header trang vở -->
+          <div class="flex justify-between items-center border-b border-sky-200 pb-3 mb-6">
+            <span class="text-xs font-sans text-gray-500 uppercase tracking-widest">Tập Thứ: 01</span>
+            <span class="text-xs font-sans text-red-500 font-bold border border-red-500 px-2 py-0.5 rounded transform rotate-3">ĐIỂM 10 BẠN ĐỌC</span>
+          </div>
+
+          <form id="survey-form" class="space-y-6 text-base sm:text-lg">
+            <!-- Tên & Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="flex flex-col gap-1">
+                <label for="survey-name" class="font-bold flex items-center gap-1.5 text-[#2d2319]">
+                  ✍️ Bạn tên là:
+                </label>
+                <input
+                  type="text"
+                  id="survey-name"
+                  required
+                  placeholder="Nhập tên của bạn..."
+                  class="bg-transparent border-b border-sky-300 focus:outline-none focus:border-red-500 text-black font-sans text-sm px-1 py-1.5 transition-colors"
+                />
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label for="survey-email" class="font-bold flex items-center gap-1.5 text-[#2d2319]">
+                  ✉️ Thư điện tử (Email):
+                </label>
+                <input
+                  type="email"
+                  id="survey-email"
+                  required
+                  placeholder="email@vidu.com..."
+                  class="bg-transparent border-b border-sky-300 focus:outline-none focus:border-red-500 text-black font-sans text-sm px-1 py-1.5 transition-colors"
+                />
+              </div>
+            </div>
+
+            <!-- Câu hỏi 1: Nhóm yêu thích -->
+            <div class="space-y-2.5 pt-2">
+              <span class="font-bold text-[#2d2319] block">🍿 Câu 1: Bạn mê nhất món nào tại tiệm tạp hóa?</span>
+              <div class="flex flex-wrap gap-2.5" id="survey-category-options">
+                <button
+                  type="button"
+                  data-value="banh-keo"
+                  class="survey-cat-opt bg-white hover:bg-amber-100 text-[#2d2319] border-2 border-[#2d2319] px-3.5 py-1.5 rounded-full text-xs font-bold font-sans transition-all active:scale-95 flex items-center gap-1"
+                >
+                  🍬 Bánh & Kẹo sữa
+                </button>
+                <button
+                  type="button"
+                  data-value="nuoc-uong"
+                  class="survey-cat-opt bg-white hover:bg-amber-100 text-[#2d2319] border-2 border-[#2d2319] px-3.5 py-1.5 rounded-full text-xs font-bold font-sans transition-all active:scale-95 flex items-center gap-1"
+                >
+                  🥤 Sá xị giải khát
+                </button>
+                <button
+                  type="button"
+                  data-value="mi-goi"
+                  class="survey-cat-opt bg-white hover:bg-amber-100 text-[#2d2319] border-2 border-[#2d2319] px-3.5 py-1.5 rounded-full text-xs font-bold font-sans transition-all active:scale-95 flex items-center gap-1"
+                >
+                  🍜 Mì hai tôm Miliket
+                </button>
+                <button
+                  type="button"
+                  data-value="gia-vi"
+                  class="survey-cat-opt bg-white hover:bg-amber-100 text-[#2d2319] border-2 border-[#2d2319] px-3.5 py-1.5 rounded-full text-xs font-bold font-sans transition-all active:scale-95 flex items-center gap-1"
+                >
+                  🧂 Gia vị bếp núc
+                </button>
+              </div>
+              <input type="hidden" id="survey-favorite-category" value="" />
+            </div>
+
+            <!-- Câu hỏi 2: Đánh giá bằng kẹo sữa -->
+            <div class="space-y-2 pt-2">
+              <span class="font-bold text-[#2d2319] block">🍬 Câu 2: Bạn chấm điểm dịch vụ của tiệm mấy viên kẹo sữa?</span>
+              <div class="flex items-center gap-3 py-1" id="candy-rating-container">
+                <button type="button" data-rating="1" class="candy-star text-3xl filter grayscale hover:grayscale-0 transition-all transform hover:scale-125 focus:outline-none">🍬</button>
+                <button type="button" data-rating="2" class="candy-star text-3xl filter grayscale hover:grayscale-0 transition-all transform hover:scale-125 focus:outline-none">🍬</button>
+                <button type="button" data-rating="3" class="candy-star text-3xl filter grayscale hover:grayscale-0 transition-all transform hover:scale-125 focus:outline-none">🍬</button>
+                <button type="button" data-rating="4" class="candy-star text-3xl filter grayscale hover:grayscale-0 transition-all transform hover:scale-125 focus:outline-none">🍬</button>
+                <button type="button" data-rating="5" class="candy-star text-3xl filter grayscale hover:grayscale-0 transition-all transform hover:scale-125 focus:outline-none">🍬</button>
+              </div>
+              <span class="text-xs text-gray-500 font-sans italic" id="rating-desc">Bấm chọn số kẹo sữa để đánh giá (1-5 kẹo)</span>
+              <input type="hidden" id="survey-rating-value" value="0" />
+            </div>
+
+            <!-- Câu hỏi 3: Đóng góp ý kiến -->
+            <div class="flex flex-col gap-1.5 pt-2">
+              <label for="survey-improvement" class="font-bold text-[#2d2319]">
+                📝 Câu 3: Món quà thơ ấu hay sản phẩm nào bạn muốn tiệm nhập về thêm?
+              </label>
+              <textarea
+                id="survey-improvement"
+                rows="3"
+                placeholder="Nhắn nhủ điều bạn thèm nhất, tiệm sẽ cố gắng tìm mua cho bạn nhé..."
+                class="bg-transparent border-b border-sky-300 focus:outline-none focus:border-red-500 text-black font-sans text-sm p-1.5 leading-relaxed resize-none transition-colors"
+              ></textarea>
+            </div>
+
+            <!-- Nút gửi khảo sát cổ điển -->
+            <div class="pt-6 text-center">
+              <button
+                type="submit"
+                id="submit-survey-btn"
+                class="bg-[#de3e3e] hover:bg-[#c12727] text-white font-retro font-bold text-lg px-8 py-3.5 rounded-lg border-2 border-[#2d2319] retro-shadow-sm transition-transform active:scale-95 inline-flex items-center gap-2"
+              >
+                📮 GỬI Ý KIẾN CHO TIỆM
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Bản đồ & Liên hệ -->
-  <footer id="lien-he" class="mt-16 bg-[#2d2319] text-[#f7f3e9] pt-12 border-t-8 border-[#e07a5f]">
+  <footer id="lien-he" class="bg-[#2d2319] text-[#f7f3e9] pt-12 border-t-8 border-[#e07a5f]">
     <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 pb-12">
       <!-- Cột 1: Thông tin liên hệ -->
       <div class="space-y-4">
@@ -545,20 +687,17 @@ const serverProducts = await fetchProducts();
 
       <!-- Cột 3: Trải nghiệm & Trò chuyện -->
       <div class="space-y-4">
-        <h4 class="font-retro text-lg font-bold text-[#f4a261] border-b border-[#4a3f35] pb-2">Hộp thư góp ý</h4>
+        <h4 class="font-retro text-lg font-bold text-[#f4a261] border-b border-[#4a3f35] pb-2">Sổ góp ý học trò</h4>
         <p class="text-xs text-[#b5a391]">
-          Bạn cần tìm món đồ hay bánh kẹo nào mà tiệm chưa có không? Nhắn ngay để tiệm nhập về nhé!
+          Ý kiến đóng góp và sự yêu mến của bạn là động lực để tiệm nhỏ cố gắng nhập thêm nhiều món ngon phục vụ chu đáo hơn nhé!
         </p>
-        <div class="flex gap-2">
-          <input
-            type="text"
-            id="feedback-input"
-            placeholder="Lời nhắn của bạn..."
-            class="bg-[#4a3f35] border-2 border-[#2d2319] text-[#f7f3e9] px-3 py-2 rounded text-xs flex-1 focus:outline-none focus:border-[#f4a261]"
-          />
-          <button id="send-feedback-btn" class="bg-[#f4a261] hover:bg-[#e76f51] text-[#2d2319] font-bold px-3 py-2 rounded text-xs transition-colors">
-            Gửi liền
-          </button>
+        <div class="pt-2">
+          <a
+            href="#khao-sat"
+            class="bg-[#f4a261] hover:bg-[#e76f51] text-[#2d2319] font-bold px-4 py-2.5 rounded text-xs transition-all border-2 border-[#2d2319] retro-shadow-sm inline-block"
+          >
+            📚 Mở Sổ Góp Ý Học Trò
+          </a>
         </div>
         <!-- MXH giả lập -->
         <div class="flex gap-3 pt-2 text-xl text-[#b5a391]">
@@ -580,7 +719,7 @@ const serverProducts = await fetchProducts();
 </Layout>
 
 <script>
-  import { fetchProducts, submitOrderToSupabase } from '../lib/productsStore';
+  import { fetchProducts, submitOrderToSupabase, submitSurveyToSupabase } from '../lib/productsStore';
 
   // State cục bộ của trang
   let products = [];
@@ -1129,6 +1268,157 @@ const serverProducts = await fetchProducts();
     }
   }
 
+  // --- SURVEY MANAGEMENT ---
+  let selectedSurveyCategory = "";
+  let currentCandyRating = 0;
+
+  function initSurveyLogic() {
+    const form = document.getElementById("survey-form");
+    if (!form) return;
+
+    // Chọn danh mục yêu thích (Câu 1)
+    const catOpts = document.querySelectorAll(".survey-cat-opt");
+    catOpts.forEach(btn => {
+      btn.addEventListener("click", () => {
+        catOpts.forEach(o => {
+          o.classList.remove("bg-[#2d2319]", "text-white");
+          o.classList.add("bg-white", "text-[#2d2319]");
+        });
+        btn.classList.remove("bg-white", "text-[#2d2319]");
+        btn.classList.add("bg-[#2d2319]", "text-white");
+        selectedSurveyCategory = btn.getAttribute("data-value") || "";
+        const input = document.getElementById("survey-favorite-category");
+        if (input) input.value = selectedSurveyCategory;
+      });
+    });
+
+    // Chọn đánh giá bằng kẹo sữa (Câu 2)
+    const ratingStars = document.querySelectorAll(".candy-star");
+    const ratingVal = document.getElementById("survey-rating-value");
+    const ratingDesc = document.getElementById("rating-desc");
+
+    const descs = {
+      1: "🍬 1 kẹo: Dịch vụ còn kém, tiệm cần cải thiện nhiều 🥺",
+      2: "🍬🍬 2 kẹo: Tạm ổn thôi, chưa ấn tượng lắm 😐",
+      3: "🍬🍬🍬 3 kẹo: Khá tốt nha, tiệm dễ thương 🙂",
+      4: "🍬🍬🍬🍬 4 kẹo: Rất mến tiệm, đồ ăn vặt ngon tuyệt 😍",
+      5: "🍬🍬🍬🍬🍬 5 kẹo: Tuyệt vời ông mặt trời, sẽ ủng hộ dài dài! 🥰"
+    };
+
+    ratingStars.forEach(star => {
+      star.addEventListener("click", () => {
+        const rating = parseInt(star.getAttribute("data-rating") || "0");
+        currentCandyRating = rating;
+        if (ratingVal) ratingVal.value = String(rating);
+
+        // Đổi trạng thái grayscale
+        ratingStars.forEach(s => {
+          const r = parseInt(s.getAttribute("data-rating") || "0");
+          if (r <= rating) {
+            s.classList.remove("grayscale");
+          } else {
+            s.classList.add("grayscale");
+          }
+        });
+
+        if (ratingDesc && descs[rating]) {
+          ratingDesc.innerText = descs[rating];
+          ratingDesc.className = "text-xs font-sans text-red-600 font-bold animate-pulse";
+        }
+      });
+    });
+
+    // Gửi khảo sát
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nameInput = document.getElementById("survey-name");
+      const emailInput = document.getElementById("survey-email");
+      const improvementInput = document.getElementById("survey-improvement");
+      const submitBtn = document.getElementById("submit-survey-btn");
+
+      if (!nameInput || !emailInput || !improvementInput || !submitBtn) return;
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const improvement = improvementInput.value.trim();
+
+      if (!name) {
+        showToast("Vui lòng điền Họ tên của bạn nha!", "warning");
+        nameInput.focus();
+        return;
+      }
+
+      if (!email) {
+        showToast("Vui lòng điền Email của bạn nha!", "warning");
+        emailInput.focus();
+        return;
+      }
+
+      if (!selectedSurveyCategory) {
+        showToast("Hãy chọn 1 nhóm sản phẩm bạn mê nhất ở Câu 1 nha!", "warning");
+        return;
+      }
+
+      if (currentCandyRating === 0) {
+        showToast("Vui lòng chấm điểm kẹo sữa ở Câu 2 giúp tiệm nha!", "warning");
+        return;
+      }
+
+      // Trạng thái loading cho nút bấm
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-75", "cursor-wait");
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerText = "📮 Đang gửi ý kiến đến tiệm...";
+
+      const responses = {
+        favorite_category: selectedSurveyCategory,
+        satisfaction_stars: currentCandyRating,
+        improvement_suggestions: improvement
+      };
+
+      const result = await submitSurveyToSupabase({
+        name,
+        email,
+        responses
+      });
+
+      if (result.success) {
+        showToast(`🎉 Cảm ơn bạn! Ý kiến đã được tiệm ghi nhận thành công! ${result.isSimulated ? '(Chế độ giả lập)' : '(Đã lưu vào Supabase)'}`, "success");
+        
+        // Reset form
+        form.reset();
+        selectedSurveyCategory = "";
+        currentCandyRating = 0;
+        if (ratingVal) ratingVal.value = "0";
+
+        // Khôi phục UI cat options
+        catOpts.forEach(o => {
+          o.classList.remove("bg-[#2d2319]", "text-white");
+          o.classList.add("bg-white", "text-[#2d2319]");
+        });
+
+        // Khôi phục UI kẹo sữa đánh giá
+        ratingStars.forEach(s => s.classList.add("grayscale"));
+        if (ratingDesc) {
+          ratingDesc.innerText = "Bấm chọn số kẹo sữa để đánh giá (1-5 kẹo)";
+          ratingDesc.className = "text-xs text-gray-500 font-sans italic";
+        }
+
+        // Reset nút bấm
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-75", "cursor-wait");
+        submitBtn.innerHTML = originalBtnText;
+
+      } else {
+        showToast(`Lỗi khi gửi góp ý: ${result.error || 'Vui lòng thử lại sau!'}`, "warning");
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-75", "cursor-wait");
+        submitBtn.innerHTML = originalBtnText;
+      }
+    });
+  }
+
   // --- THIẾT LẬP PHỤ TRỢ (TOAST & FEEDBACK) ---
   function showToast(message, type = "info") {
     const container = document.getElementById("toast-container");
@@ -1162,18 +1452,6 @@ const serverProducts = await fetchProducts();
       toast.classList.add("translate-y-2", "opacity-0");
       setTimeout(() => toast.remove(), 300);
     }, 3000);
-  }
-
-  function sendFeedback() {
-    const input = document.getElementById("feedback-input");
-    if (!input) return;
-    const message = input.value.trim();
-    if (message === "") {
-      showToast("Bạn chưa nhập nội dung góp ý!", "warning");
-      return;
-    }
-    showToast("Tiệm đã nhận được tin nhắn và sẽ sớm tìm món đó cho bạn nhé!", "success");
-    input.value = "";
   }
 
   // Khởi chạy và gán các sự kiện tĩnh
@@ -1231,7 +1509,7 @@ const serverProducts = await fetchProducts();
       });
     });
 
-    // Góp ý phản hồi
-    document.getElementById("send-feedback-btn")?.addEventListener("click", sendFeedback);
+    // Khởi tạo logic Khảo sát học trò
+    initSurveyLogic();
   });
 </script>

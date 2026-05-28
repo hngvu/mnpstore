@@ -427,6 +427,31 @@ CREATE INDEX idx_payments_refunds   ON payments USING GIN (refunds);
 
 
 -- =============================================================
+-- SURVEYS / FEEDBACKS
+-- Lưu trữ thông tin khảo sát ý kiến khách hàng
+-- =============================================================
+CREATE TABLE surveys (
+  id            UUID        PRIMARY KEY DEFAULT uuidv7(),
+  name          TEXT        NOT NULL,
+  email         TEXT        NOT NULL,
+
+  -- Embedded document: lưu các câu trả lời khảo sát dạng key-value linh hoạt
+  responses     JSONB       NOT NULL DEFAULT '{}',
+  -- {
+  --   "favorite_category": "banh-keo",
+  --   "satisfaction_stars": 5,
+  --   "improvement_suggestions": "Nhập thêm bánh tráng trộn ạ!"
+  -- }
+
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Indexes
+CREATE INDEX idx_surveys_email     ON surveys (email);
+CREATE INDEX idx_surveys_responses ON surveys USING GIN (responses);
+
+
+-- =============================================================
 -- UTILITY: Auto-update updated_at trigger
 -- =============================================================
 CREATE OR REPLACE FUNCTION set_updated_at()
